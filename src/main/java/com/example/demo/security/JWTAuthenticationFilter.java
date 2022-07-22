@@ -20,26 +20,34 @@ import java.io.IOException;
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
-    private JWTUtil jwtUtil;
+    private final JWTUtil jwtUtil;
     @Autowired
     AuthService authService;
+
+    public JWTAuthenticationFilter(JWTUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
+    }
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         String authHeader = request.getHeader("Authorization");
 
-        if (authHeader != null&&authHeader.replace("Bearer ", "")!=null) {
+
+        if (authHeader != null) {
             String userId = jwtUtil.Verify(authHeader.replace("Bearer ", "")).get("userid");
-            String email =jwtUtil.Verify(authHeader.replace("Bearer ", "")).get("useremail");
+            String email = jwtUtil.Verify(authHeader.replace("Bearer ", "")).get("useremail");
             UserDetails userDetails = authService.loadUserByUsername(jwtUtil.Verify(authHeader.replace("Bearer ", "")).get("useremail"));
 
             if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                        new UsernamePasswordAuthenticationToken(userId,email , null);
+                        new UsernamePasswordAuthenticationToken(userId, email, null);
                 usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
         }
         chain.doFilter(request, response);
     }
+
+
 }

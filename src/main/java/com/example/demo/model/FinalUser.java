@@ -2,11 +2,8 @@ package com.example.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
+import lombok.*;
+import org.hibernate.Hibernate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,39 +12,35 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
-@SpringBootApplication
-@ComponentScan("com")
+import java.util.*;
+
+
 @Data
+@RequiredArgsConstructor
 @AllArgsConstructor
-@NoArgsConstructor
 @Entity
 @Table(name = "final_user")
-public class FinalUser  implements UserDetails{
-    @Column(name = "id",nullable = false)
+public class FinalUser implements UserDetails {
+    @Column(name = "id", nullable = false)
     @Id
     @Schema(description = "系統自行產生的ID碼")
     private UUID uuid;
 
     @Schema(description = "the email of user")
-    @Column(name="email",nullable = true)
+    @Column(name = "email")
     private String email;
 
     @JsonIgnore
-    @Column(name="passwordDigest",nullable = true)
+    @Column(name = "passwordDigest")
     @Schema(description = "email of user")
     private String passwordDigest;
-    @Column(name = "name",nullable = true)
+    @Column(name = "name")
     @Schema(description = "the name of user")
     private String name;
     @Schema(description = "系統自行產生的secret 密鑰")
     private String secret;
     @Schema(description = "判斷是否有登入過，可否直接進行驗證")
     private boolean status;
-
 
 
     @Override
@@ -57,18 +50,6 @@ public class FinalUser  implements UserDetails{
         return authorities;
     }
 
-    public String getSecret() {
-        return secret;
-    }
-    public void setSecret(String secret) {
-        this.secret = secret;
-    }
-    public boolean getStatus(){
-        return status;
-    }
-    public void setStatus(boolean status){
-        this.status=status;
-    }
 
     @JsonIgnore
     @Override
@@ -104,5 +85,18 @@ public class FinalUser  implements UserDetails{
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        FinalUser finalUser = (FinalUser) o;
+        return uuid != null && Objects.equals(uuid, finalUser.uuid);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }

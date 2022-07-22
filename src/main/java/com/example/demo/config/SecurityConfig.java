@@ -1,5 +1,6 @@
-package com.example.demo.security;
+package com.example.demo.config;
 
+import com.example.demo.security.JWTAuthenticationFilter;
 import com.example.demo.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -30,8 +31,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
-    private AuthService authService;
-    private JWTAuthenticationFilter jwtAuthenticationFilter;
+    private final AuthService authService;
+    private final JWTAuthenticationFilter jwtAuthenticationFilter;
 
     @Autowired
     public SecurityConfig(AuthService authService, JWTAuthenticationFilter jwtAuthenticationFilter) {
@@ -48,10 +49,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/auth/").permitAll()
-                .antMatchers(HttpMethod.POST, "/v1/users/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/auth/getQRCode").permitAll()
+                .antMatchers(HttpMethod.POST, "/auth/create").permitAll()
                 .antMatchers(HttpMethod.GET,"/auth/captcha").permitAll()
-                .antMatchers(HttpMethod.POST,"/auth/getjwttoken").permitAll()
+                .antMatchers(HttpMethod.POST,"/auth/GetJWTToken").permitAll()
                 .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .anyRequest().authenticated()
                 .and()

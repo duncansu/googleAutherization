@@ -1,5 +1,4 @@
 package com.example.demo.lib;
-
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
@@ -7,7 +6,6 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +13,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
-import java.util.Map;
+
 
 
 public class QRcodeUtil {
@@ -23,7 +21,9 @@ public class QRcodeUtil {
     private static final int width = 300;// 默认二维码宽度
     private static final int height = 300;// 默认二维码高度
     private static final String format = "png";// 默认二维码文件格式
-    private static final Map<EncodeHintType, Object> hints = new HashMap();// 二维码参数
+    private static final HashMap hints = new HashMap();// 二维码参数
+
+
 
     static {
         hints.put(EncodeHintType.CHARACTER_SET, "utf-8");// 字符编码

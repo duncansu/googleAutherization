@@ -1,11 +1,10 @@
 package com.example.demo.service;
 
-import com.example.demo.lib.GoogleAuthenticator;
+import com.example.demo.security.GoogleAuthenticator;
 import com.example.demo.model.FinalUser;
-import com.example.demo.model.Register;
+import com.example.demo.Request.Register;
 import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,7 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository) {
@@ -34,9 +33,9 @@ public class UserServiceImpl implements UserService {
 
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String passwordDigest = passwordEncoder.encode(password);
-        boolean status=false;
+        boolean status = false;
 
-        FinalUser user = new FinalUser(id, register.getEmail(), passwordDigest,register.getName(),secret,status);
+        FinalUser user = new FinalUser(id, register.getEmail(), passwordDigest, register.getName(), secret, status);
         userRepository.saveAndFlush(user);
 
         return ResponseEntity.ok(Map.of("userId", user.getUuid().toString()));
@@ -47,29 +46,25 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
 
-    @Override
-    public ResponseEntity<?> getOneUser(String id) {
-        UUID uuid = UUID.fromString(id);
-        Optional<FinalUser> instance = userRepository.findById(uuid);
-        if (instance.isPresent()) {
-            return ResponseEntity.ok(instance.get());
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "not found record"));
-    }
-    public void deleteByName(String name){
+
+    public void deleteByName(String name) {
         userRepository.deleteByName(name);
     }
-    public List<FinalUser> UpdateTheInformation(String name,String email){
-        return userRepository.UpdateTheInformation(name,email);
+
+    public List<FinalUser> UpdateTheInformation(String name, String email) {
+        return userRepository.UpdateTheInformation(name, email);
     }
-    public Optional<FinalUser> findByName(String name){
+
+    public Optional<FinalUser> findByName(String name) {
         return userRepository.findByName(name);
     }
-    public  Optional<FinalUser> findByEmail(String email){
+
+    public Optional<FinalUser> findByEmail(String email) {
         return userRepository.findByEmail(email);
-    };
-    public void updatestatus(boolean aa,String name){
-        userRepository.updatestatus(aa,name);
+    }
+
+    public void updateStatus(boolean aa, String name) {
+        userRepository.updatestatus(aa, name);
     }
 
 }

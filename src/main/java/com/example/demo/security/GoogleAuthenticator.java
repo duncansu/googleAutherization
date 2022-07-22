@@ -1,4 +1,4 @@
-package com.example.demo.lib;
+package com.example.demo.security;
 
 import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base64;
@@ -9,12 +9,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
-/**
- * <p>Description: TODO</p>
- *
- * @author : tivy.He
- * @date : 2020-11-16 14:03:27
- */
+
 public class GoogleAuthenticator {
     // taken from Google pam docs - we probably don't need to mess with these
     public static final int SECRET_SIZE = 10;
@@ -29,6 +24,7 @@ public class GoogleAuthenticator {
      * set the windows size. This is an integer value representing the number of 30 second windows
      * we allow
      * The bigger the window, the more tolerant of clock skew we are.
+     *
      * @param s window size - must be >=0 and <=17. Other values are ignored
      */
     public void setWindowSize(int s) {
@@ -40,19 +36,19 @@ public class GoogleAuthenticator {
      * Generate a random secret key. This must be saved by the server and associated with the
      * users account to verify the code displayed by Google Authenticator.
      * The user must register this secret on their device.
+     *
      * @return secret key
      */
     public static String generateSecretKey() {
-        SecureRandom sr = null;
+        SecureRandom sr;
         try {
             sr = SecureRandom.getInstance(RANDOM_NUMBER_ALGORITHM);
             sr.setSeed(Base64.decodeBase64(SEED));
             byte[] buffer = sr.generateSeed(SECRET_SIZE);
             Base32 codec = new Base32();
             byte[] bEncodedKey = codec.encode(buffer);
-            String encodedKey = new String(bEncodedKey);
-            return encodedKey;
-        }catch (NoSuchAlgorithmException e) {
+            return new String(bEncodedKey);
+        } catch (NoSuchAlgorithmException e) {
             // should never occur... configuration error
         }
         return null;
@@ -63,8 +59,9 @@ public class GoogleAuthenticator {
      * Google Authenticator application on their smartphone to register the auth code. They can also
      * manually enter the
      * secret if desired
-     * @param user user id (e.g. fflinstone)
-     * @param host host or system that the code is for (e.g. myapp.com)
+     *
+     * @param user   user id (e.g. duncan)
+     * @param host   host or system that the code is for (e.g. myapp.com)
      * @param secret the secret that was previously generated for this user
      * @return the URL for the QR code to scan
      */
@@ -73,13 +70,7 @@ public class GoogleAuthenticator {
         return String.format(format, user, host, secret);
     }
 
-    /**
-     * Check the code entered by the user to see if it is valid
-     * @param secret The users secret.
-     * @param code The code displayed on the users device
-     * @param timeMsec The time in msec (System.currentTimeMillis() for example)
-     * @return
-     */
+
     public boolean check_code(String secret, long code, long timeMsec) {
         Base32 codec = new Base32();
         byte[] decodedKey = codec.decode(secret);
@@ -92,7 +83,7 @@ public class GoogleAuthenticator {
             long hash;
             try {
                 hash = verify_code(decodedKey, t + i);
-            }catch (Exception e) {
+            } catch (Exception e) {
                 // Yes, this is bad form - but
                 // the exceptions thrown would be rare and a static configuration problem
                 e.printStackTrace();

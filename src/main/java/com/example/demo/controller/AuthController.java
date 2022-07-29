@@ -64,7 +64,8 @@ public class AuthController {
             String captcha = authRequest.getCaptcha();
             String sessionCode = request.getSession().getAttribute("captcha").toString();
             if (sessionCode.equals(captcha)) {
-                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
+                authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword()));
                 FinalUser user = userRepository.findByEmail(authRequest.getEmail()).orElse(null);
                 assert user != null;
                 String secret = user.getSecret();
@@ -84,17 +85,18 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response1);
         }
     }
-
-
     @Operation(summary = "get captcha", description = "傳回五位數的數字驗證碼")
     @GetMapping(value = "/captcha", produces = "image/jpeg")
     public void captcha(HttpServletRequest request, HttpServletResponse response) {
         // 定義response輸出型別為image/jpeg
         response.setDateHeader("Expires", 0);
         // 設定http標準
-        response.setHeader("Cache-Control", "no-store,no-cache,must-revalidate");
+        response.setHeader("Cache-Control",
+                            "no-store,no-cache,must-revalidate");
         // 設定請求頭
-        response.addHeader("Cache-Control", "post-check=0,pre-check=0");
+        response.addHeader("Cache-Control",
+                            "post-check=0,pre-check=0");
+
         response.setHeader("Pragma", "no-cache");
         // 回應回傳的是image/jpeg型別
         response.setContentType("image/jpeg");

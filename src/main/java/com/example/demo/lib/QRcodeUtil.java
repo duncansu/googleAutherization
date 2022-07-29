@@ -43,9 +43,12 @@ public class QRcodeUtil {
         String qrCodeData = "otpauth://totp/%s?secret=%s&issuer=%s";
         try {
             return String.format(qrCodeData,
-                    URLEncoder.encode(issuer + ":" + account, "UTF-8").replace("+", "%20"),
-                    URLEncoder.encode(secret, "UTF-8").replace("+", "%20"),
-                    URLEncoder.encode(issuer, "UTF-8").replace("+", "%20"));
+                    URLEncoder.encode(issuer + ":" + account, "UTF-8")
+                                    .replace("+", "%20"),
+                    URLEncoder.encode(secret, "UTF-8")
+                                    .replace("+", "%20"),
+                    URLEncoder.encode(issuer, "UTF-8")
+                                    .replace("+", "%20"));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
